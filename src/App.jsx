@@ -107,7 +107,7 @@ export default function ValidationForm() {
           setRegisteredUser(response.data?.user);
           setFormData({ username: '', email: '', password: '' });
           setErrors({});
-        }, 1000);
+        }, 500);
       } catch (err) {
         const msg = err?.response?.data?.message || err.message || 'Server error';
         setServerError(msg);
