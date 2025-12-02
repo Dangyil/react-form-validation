@@ -1,6 +1,4 @@
-// DashboardLayout.jsx
 import { useState, useRef, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import { FaSearch } from "react-icons/fa";
 import { FaWandMagicSparkles, FaCookieBite, FaWrench } from "react-icons/fa6";
 import "./layout.css";
@@ -13,15 +11,15 @@ import {
 } from "lucide-react";
 import profilePic from "./assets/profile-pic.jpg"
 
-export default function LayoutPage({ children }) {
-  const [isOpen, setIsOpen] = useState(false); // sidebar
-  const [homeOpen, setHomeOpen] = useState(true); // dropdown for Home
-  const [networksOpen, setNetworksOpen] = useState(true); // dropdown for Networks
+export default function LayoutPage({ user, children, onLogout }) {
+  const [isOpen, setIsOpen] = useState(false); 
+  const [homeOpen, setHomeOpen] = useState(true);
+  const [networksOpen, setNetworksOpen] = useState(true); 
   const sidebarRef = useRef(null);
-  const [openDropdown, setOpenDropdown] = useState(null);
-  const toggleDropdown = (name) => {
-  setOpenDropdown(openDropdown === name ? null : name);
-};
+  // const [openDropdown, setOpenDropdown] = useState(null);
+//   const toggleDropdown = (name) => {
+//   setOpenDropdown(openDropdown === name ? null : name);
+// };
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -40,10 +38,10 @@ export default function LayoutPage({ children }) {
     };
   }, [isOpen]);
 
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
   const handleGoBack = () => {
-    navigate("/"); // takes you back to the form page
+    onLogout();
   };
   return (
     <div className="dashboard">
@@ -117,7 +115,7 @@ export default function LayoutPage({ children }) {
             />
           </div>
           <div className="right">
-          <p className="welcome-message">Welcome back, User</p>
+          <p className="welcome-message">Welcome back, {user?.username}</p>
           <img
             src={profilePic}
             alt="profile"
@@ -125,8 +123,18 @@ export default function LayoutPage({ children }) {
             />
           </div>
           </div>
-         <div className="content-box">{children}
-          <button className="back" onClick={handleGoBack}>Return to Form</button>
+         <div className="content-box">
+          {children || (
+            <div className="dashboard-content">
+              <h2>Dashboard</h2>
+              <div className="user-info">
+                <p><strong>Username:</strong> {user?.username}</p>
+                <p><strong>Email:</strong> {user?.email}</p>
+                <p><strong>ID:</strong> {user?.id}</p>
+              </div>
+            </div>
+          )}
+          <button className="back" onClick={handleGoBack}>Logout</button>
          </div>
         </div>
     </div>

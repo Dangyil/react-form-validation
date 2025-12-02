@@ -52,7 +52,7 @@ body {
     background-color: white;
     gap: 0.7rem;
     width: 27rem;
-    height: 25rem;
+    height: fit-content;
     align-items: center;
     justify-content: center;
     border-radius: 7px;
@@ -184,9 +184,8 @@ input.error {
     }
     #myForm {
         width: 65%;
-        height: 22rem;
-        padding-bottom: 1rem;
-        padding-top: 2rem;
+        /* padding-bottom: 1rem;
+        padding-top: 2rem; */
         gap: 0.4rem;
     }
     #purple-box {
@@ -236,7 +235,6 @@ input.error {
     }
     #myForm {
        width: 75%;
-       height: 55%;
     }
     #purple-box {
        width: 91%;

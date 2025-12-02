@@ -1,44 +1,42 @@
-import { useState } from 'react' // React hooks for state, side effects and Navigation
+import { useState } from 'react'
 import { useEffect } from 'react'
-import { useNavigate } from "react-router-dom";
+import API from './api/config.js';
+import LayoutPage from './layout.jsx';
 import './index.css'
 
-// ValidationForm component
 export default function ValidationForm() {
-  const navigate = useNavigate(); // Hook to navigate between pages
-  const [formData, setFormData] = useState({ // state for form input values
-    firstName: "",
-    lastName: "",
+  const [isLoginMode, setIsLoginMode] = useState(false);
+  const [formData, setFormData] = useState({
+    username: "",
     email: "",
     password: ""
   });
 
-  // Error and button disable state
   const [errors, setErrors] = useState({});
   const [isDisabled, setIsDisabled] = useState(true);
+  const [serverError, setServerError] = useState('');
+  const [serverMessage, setServerMessage] = useState('');
+  const [registeredUser, setRegisteredUser] = useState(null);
 
-  // Form fields configuration array
-  const fields = [
-    { name: "firstName", placeholder: "First name" },
-    { name: "lastName", placeholder: "Last name" },
-    { name: "email", placeholder: "Email" },
-    { name: "password", placeholder: "Password" }
-  ];
+  const fields = isLoginMode ?
+    [
+      { name: "email", placeholder: "Email" },
+      { name: "password", placeholder: "Password" }
+    ]
+    :
+    [
+      { name: "username", placeholder: "User name" },
+      { name: "email", placeholder: "Email" },
+      { name: "password", placeholder: "Password" }
+    ];
 
-  // Field validation function
   const validateField = (name, value) => {
     let message = "";
 
     switch (name) {
-      case 'firstName':
+      case 'username':
         if (!value.trim()) {
-          message = 'First name cannot be empty';
-        }
-        break;
-
-      case 'lastName':
-        if (!value.trim()) {
-          message = 'Last name cannot be empty';
+          message = 'User name cannot be empty';
         }
         break;
 
@@ -61,21 +59,21 @@ export default function ValidationForm() {
       default:
         break;
     }
-    
-    return message; // return the error message (or empty string if valid)
+
+    return message; 
   };
 
   // Full form validation function
   const validate = () => {
-    let objErrors = {}; // object to store all errors
-    let isValid = true; // flag to track overall validity
+    let objErrors = {};
+    let isValid = true;
 
     // Validate each field
     for (let field of fields) {
       const message = validateField(field.name, formData[field.name]);
-      if (message) { // if there is an error
+      if (message) {
         objErrors[field.name] = message;
-        isValid = false; // mark form as invalid
+        isValid = false;
       }
     }
 
@@ -86,18 +84,52 @@ export default function ValidationForm() {
   // Handle form field changes
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value }); // update the specific field in formData
-    setErrors({...errors, [name]: validateField(name, value)}); // validate only this field and store/update its error
+    setFormData({ ...formData, [name]: value });
+    setErrors({ ...errors, [name]: validateField(name, value) });
+    setServerError('');
+    setServerMessage('');
   };
 
   // Handle form submission
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (validate()) { // if form is valid
-      navigate("/layout"); // navigate to layout page
-      setFormData({ firstName: '', lastName: '', email: '', password: '' }); // clear all inputs
-      setErrors({}); // clear error messages
+    if (validate()) {
+      try {
+        const endPoint = isLoginMode ? '/users/login' : '/users/register';
+        const response = await API.post(endPoint, formData);
+
+        setServerMessage(response.data?.message || (isLoginMode ? 'Logged in successfully' : 'Registered successfully'));
+
+        // Save user to localStorage
+        localStorage.setItem('user', JSON.stringify(response.data?.user));
+
+          setTimeout(() => {
+          setRegisteredUser(response.data?.user);
+          setFormData({ username: '', email: '', password: '' });
+          setErrors({});
+        }, 1000);
+      } catch (err) {
+        const msg = err?.response?.data?.message || err.message || 'Server error';
+        setServerError(msg);
+      }
     }
+  };
+
+  const handleToggleMode = () => {
+    setIsLoginMode(!isLoginMode);
+    setFormData({ username: '', email: '', password: '' });
+    setErrors({});
+    setServerError('');
+    setServerMessage('');
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('user');
+    setRegisteredUser(null);
+    setFormData({ username: '', email: '', password: '' });
+    setErrors({});
+    setServerError('');
+    setServerMessage('');
   };
 
   // Prevent submission if there are validation errors
@@ -105,6 +137,18 @@ export default function ValidationForm() {
     const hasErrors = Object.values(errors).some(error => error);
     setIsDisabled(hasErrors);
   }, [formData, errors]);
+
+  // Check if user is already logged in
+  useEffect(() => {
+    const savedUser = localStorage.getItem('user');
+    if (savedUser) {
+      setRegisteredUser(JSON.parse(savedUser));
+    }
+  }, []);
+
+  if (registeredUser) {
+    return <LayoutPage user={registeredUser} onLogout={handleLogout} />;
+  }
 
   return (
     <div id="overall">
@@ -122,38 +166,79 @@ export default function ValidationForm() {
             Try it free 7 days <span id="then">then $20/mo. thereafter</span>
           </p>
         </div>
-    <form id="myForm" onSubmit={handleSubmit} noValidate>
-      {fields.map((field) => (
-        <label key={field.name}>
-          <div className="input-wrapper">
-            <input
-              type={field.name === "email" ? "email" : field.name === "password" ? "password" : "text"}
-              name={field.name}
-              placeholder={errors[field.name] ? "" : field.placeholder}
-              value={formData[field.name]}
-              onChange={handleChange}
-              className={errors[field.name] ? 'error' : ''}
-              />
-           <span className="error-icon" style={{ display: errors[field.name] ? 'inline-block' : 'none' }}   >
-                  !
-           </span>
-          </div>
-              <span className="error">{errors[field.name]}</span>
-        </label>
-      ))}
 
-      <button className='submit-btn'
+        {/* Toggle buttons */}
+        <div style={{ display: 'flex', gap: '10px', marginBottom: '20px', borderBottom: '2px solid #ddd', borderRadius: '5px' }}>
+          <button
+            onClick={handleToggleMode}
+            style={{
+              padding: '10px 20px',
+              background: !isLoginMode ? '#5E548E' : 'transparent',
+              color: !isLoginMode ? 'white' : '#5E548E',
+              border: 'none',
+              cursor: 'pointer',
+              fontWeight: 'bold',
+              fontSize: '16px',
+              borderRadius: '5px'
+            }}
+          >
+            Register
+          </button>
+          <button
+            onClick={handleToggleMode}
+            style={{
+              padding: '10px 20px',
+              background: isLoginMode ? '#5E548E' : 'transparent',
+              color: isLoginMode ? 'white' : '#5E548E',
+              border: 'none',
+              cursor: 'pointer',
+              fontWeight: 'bold',
+              fontSize: '16px',
+              borderRadius: '5px'
+            }}
+          >
+            Login
+          </button>
+        </div>
+
+        <form id="myForm" onSubmit={handleSubmit} noValidate>
+          {fields.map((field) => (
+            <label key={field.name}>
+              <div className="input-wrapper">
+                <input
+                  type={field.name === "email" ? "email" : field.name === "password" ? "password" : "text"}
+                  name={field.name}
+                  placeholder={errors[field.name] ? "" : field.placeholder}
+                  value={formData[field.name]}
+                  onChange={handleChange}
+                  className={errors[field.name] ? 'error' : ''}
+                />
+                <span className="error-icon" style={{ display: errors[field.name] ? 'inline-block' : 'none' }}   >
+                  !
+                </span>
+              </div>
+              <span className="error">{errors[field.name]}</span>
+            </label>
+          ))}
+
+          <button className='submit-btn'
             type="submit"
             disabled={isDisabled}
-            >
-            SUBMIT
+          >
+            {isLoginMode ? 'LOGIN' : 'SUBMIT'}
           </button>
-      <p id="terms">
-        By clicking the button, you are agreeing to our{" "}
-        <a href="#">Terms and Services</a>
-      </p>
-    </form>
-    </div> 
-   </div>
+
+          {serverError && <p className="server-error" style={{ color: 'var(--clr-red, #d9534f)', marginTop: '6px' }}>{serverError}</p>}
+          {serverMessage && <p className="server-message" style={{ color: 'var(--clr-green, #28a745)', marginTop: '6px' }}>{serverMessage}</p>}
+
+          {!isLoginMode && (
+            <p id="terms">
+              By clicking the button, you are agreeing to our{" "}
+              <a href="#">Terms and Services</a>
+            </p>
+          )}
+        </form>
+      </div>
+    </div>
   );
 }
