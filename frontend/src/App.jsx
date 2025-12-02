@@ -252,7 +252,7 @@ export default function ValidationForm() {
 
           {!isLoginMode && (
             <p id="terms">
-              By clicking the button, you are agreeing to our{" "}
+              By clicking the button, you are agreeing to our{""}
               <a href="#">Terms and Services</a>
             </p>
           )}
