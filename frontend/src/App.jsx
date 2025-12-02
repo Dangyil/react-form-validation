@@ -110,7 +110,7 @@ export default function ValidationForm() {
           setFormData({ username: '', email: '', password: '' });
           setErrors({});
           setIsLoading(false);
-        }, 1500);
+        }, 1000);
       } catch (err) {
         const msg = err?.response?.data?.message || err.message || 'Server error';
         setServerError(msg);
