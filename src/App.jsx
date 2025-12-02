@@ -17,6 +17,7 @@ export default function ValidationForm() {
   const [serverError, setServerError] = useState('');
   const [serverMessage, setServerMessage] = useState('');
   const [registeredUser, setRegisteredUser] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const fields = isLoginMode ?
     [
@@ -94,6 +95,7 @@ export default function ValidationForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (validate()) {
+      setIsLoading(true);
       try {
         const endPoint = isLoginMode ? '/users/login' : '/users/register';
         const response = await API.post(endPoint, formData);
@@ -107,10 +109,12 @@ export default function ValidationForm() {
           setRegisteredUser(response.data?.user);
           setFormData({ username: '', email: '', password: '' });
           setErrors({});
+          setIsLoading(false);
         }, 1000);
       } catch (err) {
         const msg = err?.response?.data?.message || err.message || 'Server error';
         setServerError(msg);
+        setIsLoading(false);
       }
     }
   };
@@ -223,9 +227,24 @@ export default function ValidationForm() {
 
           <button className='submit-btn'
             type="submit"
-            disabled={isDisabled}
+            disabled={isDisabled || isLoading}
           >
-            {isLoginMode ? 'LOGIN' : 'SUBMIT'}
+            {isLoading ? (
+              <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+                <span style={{ 
+                  display: 'inline-block',
+                  width: '16px',
+                  height: '16px',
+                  border: '3px solid rgba(255, 255, 255, 0.3)',
+                  borderTop: '3px solid white',
+                  borderRadius: '50%',
+                  animation: 'spin 1s linear infinite'
+                }}></span>
+                Loading...
+              </span>
+            ) : (
+              isLoginMode ? 'LOGIN' : 'SUBMIT'
+            )}
           </button>
 
           {serverError && <p className="server-error" style={{ color: 'var(--clr-red, #d9534f)', marginTop: '6px' }}>{serverError}</p>}
@@ -233,7 +252,7 @@ export default function ValidationForm() {
 
           {!isLoginMode && (
             <p id="terms">
-              By clicking the button, you are agreeing to our{" "}
+              By clicking the button, you are agreeing to our{""}
               <a href="#">Terms and Services</a>
             </p>
           )}
