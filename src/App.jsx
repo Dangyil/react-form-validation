@@ -130,7 +130,7 @@ export default function ValidationForm() {
   const handleLogout = () => {
     localStorage.removeItem('user');
     setRegisteredUser(null);
-    setFormData({ username: '', email: '', password: '' });
+    // setFormData({ username: '', email: '', password: '' });
     setErrors({});
     setServerError('');
     setServerMessage('');
