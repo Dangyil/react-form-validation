@@ -107,7 +107,7 @@ export default function ValidationForm() {
 
           setTimeout(() => {
           setRegisteredUser(response.data?.user);
-          setFormData({ username: '', email: '', password: '' });
+          // setFormData({ username: '', email: '', password: '' });
           setErrors({});
           setIsLoading(false);
         }, 1000);
