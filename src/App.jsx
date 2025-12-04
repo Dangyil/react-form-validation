@@ -110,7 +110,7 @@ export default function ValidationForm() {
           // setFormData({ username: '', email: '', password: '' });
           setErrors({});
           setIsLoading(false);
-        }, 1000);
+        }, 200);
       } catch (err) {
         const msg = err?.response?.data?.message || err.message || 'Server error';
         setServerError(msg);
@@ -240,7 +240,7 @@ export default function ValidationForm() {
                   borderRadius: '50%',
                   animation: 'spin 1s linear infinite'
                 }}></span>
-                Loading...
+               
               </span>
             ) : (
               isLoginMode ? 'LOGIN' : 'SUBMIT'
