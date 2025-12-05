@@ -100,7 +100,7 @@ export default function ValidationForm() {
         const endPoint = isLoginMode ? '/users/login' : '/users/register';
         const response = await API.post(endPoint, formData);
 
-        setServerMessage(response.data?.message || (isLoginMode ? 'Logged in successfully' : 'Registered successfully'));
+        // setServerMessage(response.data?.message || (isLoginMode ? 'Logged in successfully' : 'Registered successfully'));
 
         // Save user to localStorage
         localStorage.setItem('user', JSON.stringify(response.data?.user));
