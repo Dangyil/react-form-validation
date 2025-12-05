@@ -105,12 +105,12 @@ export default function ValidationForm() {
         // Save user to localStorage
         localStorage.setItem('user', JSON.stringify(response.data?.user));
 
-          setTimeout(() => {
+         
           setRegisteredUser(response.data?.user);
           // setFormData({ username: '', email: '', password: '' });
           setErrors({});
           setIsLoading(false);
-        }, 200);
+        
       } catch (err) {
         const msg = err?.response?.data?.message || err.message || 'Server error';
         setServerError(msg);
