@@ -121,7 +121,7 @@ export default function ValidationForm() {
 
   const handleToggleMode = () => {
     setIsLoginMode(!isLoginMode);
-    setFormData({ username: '', email: '', password: '' });
+    // setFormData({ username: '', email: '', password: '' });
     setErrors({});
     setServerError('');
     setServerMessage('');
