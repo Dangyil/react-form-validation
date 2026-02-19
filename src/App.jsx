@@ -125,6 +125,7 @@ export default function ValidationForm() {
     setErrors({});
     setServerError('');
     setServerMessage('');
+    setFormData("");
   };
 
   const handleLogout = () => {
@@ -134,6 +135,7 @@ export default function ValidationForm() {
     setErrors({});
     setServerError('');
     setServerMessage('');
+    setFormData("");
   };
 
   // Prevent submission if there are validation errors
