@@ -275,3 +275,9 @@ input.error {
         line-height: 19px;
     }
 }
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

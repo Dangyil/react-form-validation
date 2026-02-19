@@ -3,20 +3,28 @@ import cors from 'cors';
 import mongoose from 'mongoose';
 import productRoute from './routes/product.route.js';
 import userRoute from './routes/user.route.js';
+import ratelimit from 'express-rate-limit';
+import helmet from 'helmet';
 
 const app = express();
 const port = process.env.PORT || 8000;
+
+const limiter = ratelimit({
+  windowMs: 15 * 60 * 1000,
+  max: 100
+});
+
+app.use(limiter);
+app.use(helmet());
 
 // middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cors());
-app.use((req, res, next) => {
-  res.setHeader('Access-Control-Allow-Origin', '*'); 
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-  next();
-});
+app.use(cors({
+  origin: ['http://localhost:3000', 'https://yourdomain.com'],
+  credentials: true
+}));
 
 // route handler
 app.get('/', (req, res) => {
@@ -29,7 +37,7 @@ app.use('/api/products', productRoute);
 app.use('/api/users', userRoute);
 
 //connect to database
-mongoose.connect("mongodb+srv://admin:4Vk3gMHqDXbQnvRW@backend.jhob2vf.mongodb.net/?appName=backend").then(() => {
+mongoose.connect(process.env.MONGO_URI).then(() => {
     console.log("Connected to MongoDB database!");
     app.listen(port, () => {
         console.log(`Server is running on port ${port}`);
