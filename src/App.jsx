@@ -61,7 +61,7 @@ export default function ValidationForm() {
         break;
     }
 
-    return message; 
+    return message;
   };
 
   // Full form validation function
@@ -100,17 +100,12 @@ export default function ValidationForm() {
         const endPoint = isLoginMode ? '/users/login' : '/users/register';
         const response = await API.post(endPoint, formData);
 
-        // setServerMessage(response.data?.message || (isLoginMode ? 'Logged in successfully' : 'Registered successfully'));
-
         // Save user to localStorage
         localStorage.setItem('user', JSON.stringify(response.data?.user));
+        setRegisteredUser(response.data?.user);
+        setErrors({});
+        setIsLoading(false);
 
-         
-          setRegisteredUser(response.data?.user);
-          // setFormData({ username: '', email: '', password: '' });
-          setErrors({});
-          setIsLoading(false);
-        
       } catch (err) {
         const msg = err?.response?.data?.message || err.message || 'Server error';
         setServerError(msg);
@@ -121,7 +116,6 @@ export default function ValidationForm() {
 
   const handleToggleMode = () => {
     setIsLoginMode(!isLoginMode);
-    // setFormData({ username: '', email: '', password: '' });
     setErrors({});
     setServerError('');
     setServerMessage('');
@@ -131,7 +125,6 @@ export default function ValidationForm() {
   const handleLogout = () => {
     localStorage.removeItem('user');
     setRegisteredUser(null);
-    // setFormData({ username: '', email: '', password: '' });
     setErrors({});
     setServerError('');
     setServerMessage('');
@@ -233,7 +226,7 @@ export default function ValidationForm() {
           >
             {isLoading ? (
               <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
-                <span style={{ 
+                <span style={{
                   display: 'inline-block',
                   width: '16px',
                   height: '16px',
@@ -242,7 +235,7 @@ export default function ValidationForm() {
                   borderRadius: '50%',
                   animation: 'spin 1s linear infinite'
                 }}></span>
-               
+
               </span>
             ) : (
               isLoginMode ? 'LOGIN' : 'SUBMIT'
