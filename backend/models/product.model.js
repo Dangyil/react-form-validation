@@ -6,7 +6,11 @@ const productSchema = new mongoose.Schema(
         type: String,
         required: [true, "Please enter product name"]
       },
-
+      description: {
+        type: String,
+        required: false,
+        default: ""
+      },
       quantity: {
         type: Number,
         required: true,
@@ -21,9 +25,19 @@ const productSchema = new mongoose.Schema(
         type: String,
         required: false
       },
+      userId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required: false
+      },
+      status: {
+        type: String,
+        enum: ['active', 'inactive', 'archived'],
+        default: 'active'
+      }
     },
-    { timestamps: true, }  
+    { timestamps: true }  
 );
 
-const Product = mongoose.model("Product", productSchema)
+const Product = mongoose.model("Product", productSchema);
 export default Product;

@@ -1,8 +1,19 @@
 import express from 'express';
-import { getProducts, getProductById, createProduct, updateProduct, deleteProduct } from '../controllers/product.controller.js';
+import { verifyToken } from '../middleware/auth.js';
+import { 
+  getProducts, 
+  getProductById, 
+  createProduct, 
+  updateProduct, 
+  deleteProduct,
+  getProductStats
+} from '../controllers/product.controller.js';
 
 const router = express.Router();
 
+router.use(verifyToken);
+
+router.get('/stats/overview', getProductStats);
 router.get('/', getProducts);
 router.get('/:id', getProductById);
 router.post('/', createProduct);

@@ -1,9 +1,17 @@
 import express from 'express';
-import { registerUser, loginUser, logoutUser } from '../controllers/user.controller.js';
+import { verifyToken } from '../middleware/auth.js';
+import { 
+    registerUser, 
+    loginUser, 
+    logoutUser, 
+    updateProfile,
+    verifyAuth } from '../controllers/user.controller.js';
 
 const router = express.Router();
-router.route('/register').post(registerUser);
-router.route('/login').post(loginUser);
-router.route('/logout').post(logoutUser);
+router.post('/register', registerUser);
+router.post('/login', loginUser);
+router.post('/logout', verifyToken, logoutUser);
+router.put('/update-profile', verifyToken, updateProfile);
+router.get('/verify', verifyToken, verifyAuth);
 
 export default router;
