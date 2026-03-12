@@ -7,10 +7,10 @@ const getBaseURL = () => {
     return 'http://localhost:8000/api';
   }
 
-  // Production (Render)
-  if (import.meta.env.VITE_API_URL) {
-    return import.meta.env.VITE_API_URL;
-  }
+  // // Production (Render)
+  // if (import.meta.env.VITE_API_URL) {
+  //   return import.meta.env.VITE_API_URL;
+  // }
 
   // Fallback for production
   return 'https://react-form-validation-api-4ist.onrender.com/api';
