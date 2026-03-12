@@ -2,11 +2,10 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '../hooks/useAuth';
 import { useFetch } from '../hooks/useFetch';
 import DashboardNav from '../components/DashboardNav';
-import OverviewSection from '../components/Dashboard/OverviewSection';
-import ProductsSection from '../components/Dashboard/ProductsSection';
-import AnalyticsSection from '../components/Dashboard/AnalyticsSection';
-import ProfileSection from '../components/Dashboard/ProfileSection';
-// import SettingsSection from '../components/Dashboard/SettingsSection';
+import OverviewSection from '../components/dashboard/OverviewSection';
+import ProductsSection from '../components/dashboard/ProductsSection';
+import AnalyticsSection from '../components/dashboard/AnalyticsSection';
+import ProfileSection from '../components/dashboard/ProfileSection';
 import { toast } from "react-toastify";
 import Swal from "sweetalert2";
 
@@ -192,11 +191,6 @@ export default function Dashboard() {
             handleUpdateProfile={handleUpdateProfile}
           />
         );
-
-      // case 'settings':
-      //   return (
-      //     <SettingsSection />
-      //   );  
 
       default:
         return null;
