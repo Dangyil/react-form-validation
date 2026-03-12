@@ -3,17 +3,15 @@ import axios from 'axios';
 // Environment-based API configuration
 const getBaseURL = () => {
   // Local development
-  if (import.meta.env.DEV) {
-    return 'http://localhost:8000/api';
-  }
+  // if (import.meta.env.DEV) {
+  //   return 'http://localhost:8000/api';
+  // }
 
   // // Production (Render)
   // if (import.meta.env.VITE_API_URL) {
   //   return import.meta.env.VITE_API_URL;
   // }
-
-  // Fallback for production
-  return 'https://react-form-validation-api-4ist.onrender.com/api';
+return 'https://react-form-validation-api-4ist.onrender.com/api';
 };
 
 const API = axios.create({
