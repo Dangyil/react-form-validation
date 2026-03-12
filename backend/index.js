@@ -8,6 +8,7 @@ import ratelimit from 'express-rate-limit';
 import helmet from 'helmet';
 
 dotenv.config();
+// var process = process || {};
 if (!process.env.MONGO_URI) {
   throw new Error('MONGO_URI environment variable is not set');
 }
@@ -40,7 +41,6 @@ app.get('/', (req, res) => {
     res.send({ message: 'Hello from this side!' });
 });
 
- 
 app.use('/api/products', productRoute);
 
 app.use('/api/users', userRoute);
