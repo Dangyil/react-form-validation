@@ -1,13 +1,13 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { useAuth } from '../hooks/useAuth';
 import { useFetch } from '../hooks/useFetch';
 import FormInput from '../components/FormInput';
 import { validateField } from '../utils/validators';
+import { toast } from "react-toastify";
+
 
 export default function Register() {
   const navigate = useNavigate();
-  const { register } = useAuth();
   const { request, loading } = useFetch();
 
   const [formData, setFormData] = useState({ username: '', email: '', password: '' });
@@ -43,17 +43,20 @@ export default function Register() {
     }
 
     try {
-      const response = await request('POST', '/users/register', formData);
-      register(response.user, response.token);
+      await request('POST', '/users/register', formData);
+      toast.success('Registration successful!');
       navigate('/login');
     } catch (err) {
-      const errorMsg = err.response?.data?.message || 'Registration failed. Please try again.';
+      const errorMsg =
+        err.response?.data?.message ||
+        err.message ||
+        'Registration failed';
+
       setServerError(errorMsg);
     }
   };
 
   const hasErrors = Object.values(errors).some(error => error);
-  // const isEmpty = !formData.username || !formData.email || !formData.password;
 
   return (
     <div className="auth-container">

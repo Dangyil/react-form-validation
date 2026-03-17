@@ -47,7 +47,8 @@ export default function Login() {
       login(response.user, response.token);
       navigate('/dashboard');
     } catch (err) {
-      const errorMsg = err.response?.data?.message || 'Login failed. Please try again.';
+      const errorMsg = err.response?.data?.message ||
+        err.message || 'Login failed!';
       setServerError(errorMsg);
     }
   };
